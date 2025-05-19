@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diseño: Sistema Web para Gestión de Solicitudes de Soporte</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f9; /* Un fondo ligeramente diferente */
+            color: #343a40; /* Texto principal oscuro */
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .content-section {
+            background-color: #ffffff;
+            padding: 25px 30px; /* Más padding interno */
+            border-radius: 10px; /* Bordes más redondeados */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.07); /* Sombra un poco más pronunciada */
+            margin-bottom: 35px;
+            width: 90%;
+            max-width: 950px;
+        }
+
+        .content-section h3 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #007bff;
+            font-size: 1.4em; /* Título principal de sección más grande */
+            border-bottom: 2px solid #007bff; /* Línea bajo el título */
+            padding-bottom: 10px;
+        }
+        .content-section h4 {
+            margin-top: 25px;
+            margin-bottom: 12px;
+            color: #17a2b8;
+            font-size: 1.15em;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 6px;
+        }
+        .content-section p, .content-section ul li {
+            font-size: 1em; /* Tamaño de fuente base */
+            line-height: 1.7;
+            color: #5a6268; /* Color de texto ligeramente más suave */
+        }
+        .content-section ul {
+            padding-left: 25px; /* Más indentación para listas */
+            margin-top: 8px;
+        }
+        .content-section strong {
+            color: #343a40; /* Resaltar texto importante */
+        }
+
+        .main-legend-list {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0 0 0; /* Ajuste de margen */
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 25px;
+            justify-content: center;
+        }
+
+        .main-legend-list li {
+            display: flex;
+            align-items: center;
+            font-size: 0.95em;
+            color: #495057; /* Color para items de leyenda */
+        }
+
+        .legend-icon {
+            margin-right: 8px;
+            font-size: 1.1em;
+            min-width: 20px;
+            text-align: center;
+        }
+        .pk-icon { color: #28a745; font-weight: bold; }
+        .fk-icon { color: #fd7e14; font-style: italic; }
+        .ai-tag-legend {
+            font-size: 0.9em; color: #6c757d; background-color: #e9ecef;
+            padding: 2px 5px; border-radius: 4px; margin-right: 5px;
+        }
+
+
+        .diagram-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px 40px;
+            padding: 10px 0;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .table-card {
+            background-color: #ffffff;
+            border: 1px solid #d1d9e0;
+            border-top: 5px solid #007bff;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            min-width: 260px;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .table-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 18px rgba(0, 0, 0, 0.08);
+        }
+
+        .table-card.color-green .table-name, .table-card.color-green { border-top-color: #28a745; }
+        .table-card.color-orange .table-name, .table-card.color-orange { border-top-color: #fd7e14; }
+        .table-card.color-purple .table-name, .table-card.color-purple { border-top-color: #6f42c1; }
+        .table-card.color-red .table-name, .table-card.color-red { border-top-color: #dc3545; }
+        .table-card.color-gray .table-name, .table-card.color-gray { border-top-color: #6c757d; }
+
+
+        .table-name {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            font-weight: 600;
+            text-align: center;
+            border-top-left-radius: 7px;
+            border-top-right-radius: 7px;
+            font-size: 1.15em;
+        }
+        .table-card.color-green .table-name { background-color: #28a745; }
+        .table-card.color-orange .table-name { background-color: #fd7e14; }
+        .table-card.color-purple .table-name { background-color: #6f42c1; }
+        .table-card.color-red .table-name { background-color: #dc3545; }
+        .table-card.color-gray .table-name { background-color: #6c757d; }
+
+
+        .table-columns {
+            padding: 15px;
+            font-size: 0.9em;
+        }
+
+        .table-columns ul {
+            list-style-type: none;
+            padding-left: 0;
+            margin: 0;
+        }
+
+        .table-columns li {
+            padding: 7px 0;
+            border-bottom: 1px dotted #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .table-columns li:last-child {
+            border-bottom: none;
+        }
+
+        .column-details {
+            display: flex;
+            align-items: center;
+        }
+
+        .column-icon {
+            margin-right: 8px;
+            font-size: 1em;
+            width: 18px;
+            text-align: center;
+        }
+        .ai-tag {
+            font-size: 0.75em; color: #6c757d; background-color: #e9ecef;
+            padding: 1px 3px; border-radius: 3px; margin-left: 4px;
+        }
+        .column-name { font-weight: 500; color: #343a40; }
+        .column-type { color: #495057; font-style: italic; font-size: 0.9em; }
+        .column-constraints { font-size: 0.8em; color: #6c757d; margin-left: 5px; }
+
+        .relations-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .relations-list li {
+            font-size: 0.95em;
+            margin-bottom: 10px;
+            line-height: 1.5;
+            color: #5a6268;
+        }
+        .relations-list strong {
+            color: #007bff;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="content-section">
+        <h3>Sistema Web para Gestión Centralizada de Solicitudes de Soporte</h3>
+        <p>Se desarrollará una plataforma web destinada a optimizar y centralizar el proceso de solicitudes de soporte interno. Esta herramienta reemplazará los métodos informales actuales, como correos electrónicos o comunicación verbal, proporcionando un canal único y estructurado para la gestión de requerimientos.</p>
+
+        <h4>Objetivos y Funcionalidades Principales:</h4>
+        <ul>
+            <li><strong>Centralización de Solicitudes:</strong> Todas las solicitudes de soporte se registrarán y gestionarán a través de la plataforma.</li>
+            <li><strong>Registro Eficiente:</strong> Los <strong>usuarios responsables de oficina</strong> podrán crear nuevas solicitudes, especificando la oficina afectada (pudiendo elegir entre las que tenga asignadas) y el tipo de soporte requerido (asociado a un rol de ejecutivo).</li>
+            <li><strong>Gestión por el Administrador:</strong> El <strong>Administrador del Sistema</strong> será responsable de la configuración inicial y el mantenimiento de la plataforma. Esto incluye:
+                <ul>
+                    <li>Creación y gestión de <strong>Oficinas</strong>.</li>
+                    <li>Creación y gestión de <strong>Usuarios</strong> (tanto solicitantes como personal de soporte/ejecutivos).</li>
+                    <li>Creación y gestión de <strong>Roles</strong> (ej. "Solicitante Oficina", "Ejecutivo de TI", "Ejecutivo de Logística", "Administrador"), asignando un color distintivo a los roles de atención para su visualización en el dashboard.</li>
+                    <li>Asignación de usuarios a una o múltiples oficinas, permitiéndoles registrar solicitudes para estas.</li>
+                    <li>Asignación de roles a los usuarios.</li>
+                </ul>
+            </li>
+            <li><strong>Dashboard de Monitoreo para Ejecutivos:</strong>
+                <ul>
+                    <li>El personal de soporte (<strong>Ejecutivos</strong>) visualizará un dashboard con un listado de todas las oficinas.</li>
+                    <li>Las oficinas con solicitudes activas (pendientes o en progreso) se destacarán con un <strong>color específico</strong>. Este color corresponderá al `color_dashboard` definido en el rol del ejecutivo requerido para atender dicha solicitud.</li>
+                    <li>Al hacer clic en una oficina "pintada" (o en su indicador de color), se mostrará el detalle de las solicitudes pendientes que requieren atención del rol del ejecutivo logueado.</li>
+                    <li>Una vez una solicitud es gestionada y completada (resuelta/cerrada), el indicador de color correspondiente en el dashboard se actualizará o "despintará".</li>
+                </ul>
+            </li>
+            <li><strong>Gestión de Solicitudes por Ejecutivos:</strong> Los ejecutivos podrán asignarse solicitudes, actualizar su estado (ej. "En Progreso", "Resuelta"), registrar la solución aplicada y cerrar los casos.</li>
+            <li><strong>Trazabilidad y Comunicación:</strong> Se mantendrá un historial completo de cada solicitud, incluyendo comentarios y cambios de estado, mejorando la transparencia y la comunicación entre solicitantes y ejecutivos.</li>
+        </ul>
+        <p>Este sistema busca mejorar significativamente la eficiencia, organización y seguimiento del soporte interno, proporcionando una herramienta robusta tanto para los usuarios que solicitan ayuda como para el personal encargado de brindarla.</p>
+
+        <h4 style="margin-top: 30px;">Simbología de Tablas</h4>
+        <ul class="main-legend-list">
+            <li><span class="legend-icon pk-icon">🔑</span> Clave Primaria (PK)</li>
+            <li><span class="legend-icon fk-icon">🔗</span> Clave Foránea (FK)</li>
+            <li><span class="ai-tag-legend">AI</span> Autoincremental</li>
+            <li><span class="column-constraints" style="font-style:italic;">(TablaRef)</span> Tabla Referenciada por FK</li>
+        </ul>
+    </div>
+
+
+    <div class="content-section">
+        <h3>Diseño de la Base de Datos</h3>
+        <div class="diagram-container">
+
+            <!-- Tabla Roles -->
+            <div class="table-card color-purple">
+                <div class="table-name">Roles</div>
+                <div class="table-columns">
+                    <ul>
+                        <li>
+                            <div class="column-details"><span class="column-icon pk-icon">🔑</span><span class="column-name">id_rol</span><span class="ai-tag">AI</span></div><span class="column-type">INT</span>
+                        </li>
+                        <li>
+                            <div class="column-details"><span class="column-icon"></span><span class="column-name">nombre_rol</span></div><span class="column-type">VARCHAR(50) <span class="column-constraints">UNQ</span></span>
+                        </li>
+                        <li>
+                            <div class="column-details"><span class="column-icon"></span><span class="column-name">descripcion_rol</span></div><span class="column-type">TEXT <span class="column-constraints">NULL</span></span>
+                        </li>
+                        <li>
+                            <div class="column-details"><span class="column-icon"></span><span class="column-name">color_dashboard</span></div><span class="column-type">VARCHAR(7) <span class="column-constraints">NULL</span></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Tabla UsuarioRoles (Intermedia para Usuarios y Roles *..*) -->
+            <div class="table-card color-gray">
+                <div class="table-name">UsuarioRoles</div>
+                <div class="table-columns">
+                    <ul>
+                        <li>
+                            <div class="column-details"><span class="column-icon pk-icon fk-icon">🔑🔗</span><span class="column-name">id_usuario</span></div><span class="column-type">INT <span class="column-constraints">(Usuarios)</span></span>
+                        </li>
+                        <li>
+                            <div class="column-details"><span class="column-icon pk-icon fk-icon">🔑🔗</span><span class="column-name">id_rol</span></div><span class="column-type">INT <span class="column-constraints">(Roles)</span></span>
+                        </li>
+                    </ul>
+                    <div style="text-align:center;font-size:0.8em;color:#6c757d;padding-top:5px;">PK: (id_usuario, id_rol)</div>
+                </div>
+            </div>
+
+            <!-- Tabla Usuarios -->
+            <div class="table-card">
+                <div class="table-name">Usuarios</div>
+                <div class="table-columns">
+                    <ul>
+                        <li>
+                            <div class="column-details"><span class="column-icon pk-icon">🔑</span><span class="column-name">id_usuario</span><span class="ai-tag">AI</span></div><span class="column-type">INT</span>
+                        </li>
+                        <li>
+                            <div class="column-details"><span class="column-icon"></span><span class="column-name">nombre_completo</span></div><span class="column-type">VARCHAR(255)</span>
+                        </li>
+                        <li>
+                            <div class="column-details"><span class="column-icon"></span><span class="column-name">email</span></div><span class="column-type">VARCHAR(255) <span class="column-constraints">UNQ</span></span>
+                        </li>
+                        <li>
+                            <div class="column-details"><span class="column-icon"></span><span class="column-name">password_hash</span></div><span class="column-type">VARCHAR(255)</span>
+                        </li>
+                        <li>
+                            <div class="column-details"><span class="column-icon"></span><span class="column-name">activo</span></div><span class="column-type">BOOLEAN</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Tabla Oficinas -->
+            <div class="table-card color-green">
+                <div class="table-name">Oficinas</div>
+                <div class="table-columns">
+                    <ul>
+                        <li>
+                            <div class="column-details"><span class="column-icon pk-icon">🔑</span><span class="column-name">id_oficina</span><span class="ai-tag">AI</span></div><span class="column-type">INT</span>
+                        </li>
+                        <li>
+                            <div class="column-details"><span class="column-icon"></span><span class="column-name">nombre_oficina</span></div><span class="column-type">VARCHAR(100) <span class="column-constraints">UNQ</span></span>
+                        </li>
+                        <li>
+                            <div class="column-details"><span class="column-icon"></span><span class="column-name">descripcion_oficina</span></div><span class="column-type">TEXT <span class="column-constraints">NULL</span></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Tabla UsuarioOficina (Intermedia para Usuarios y Oficinas *..*) -->
+            <div class="table-card color-orange">
+                <div class="table-name">UsuarioOficina</div>
+                <div class="table-columns">
+                    <ul>
+                        <li>
+                            <div class="column-details"><span class="column-icon pk-icon fk-icon">🔑🔗</span><span class="column-name">id_usuario</span></div><span class="column-type">INT <span class="column-constraints">(Usuarios)</span></span>
+                        </li>
+                        <li>
+                            <div class="column-details"><span class="column-icon pk-icon fk-icon">🔑🔗</span><span class="column-name">id_oficina</span></div><span class="column-type">INT <span class="column-constraints">(Oficinas)</span></span>
+                        </li>
+                        <li>
+                            <div class="column-details"><span class="column-icon"></span><span class="column-name">fecha_asignacion</span></div><span class="column-type">TIMESTAMP</span>
+                        </li>
+                    </ul>
+                    <div style="text-align:center;font-size:0.8em;color:#6c757d;padding-top:5px;">PK: (id_usuario, id_oficina)</div>
+                </div>
+            </div>
+
+            <!-- Tabla Solicitudes -->
+            <div class="table-card color-red">
+                <div class="table-name">Solicitudes</div>
+                <div class="table-columns">
+                    <ul>
+                        <li>
+                            <div class="column-details"><span class="column-icon pk-icon">🔑</span><span class="column-name">id_solicitud</span><span class="ai-tag">AI</span></div><span class="column-type">INT</span>
+                        </li>
+                        <li>
+                            <div class="column-details"><span class="column-icon fk-icon">🔗</span><span class="column-name">id_usuario_solicitante</span></div><span class="column-type">INT <span class="column-constraints">(Usuarios)</span></span>
+                        </li>
+                        <li>
+                            <div class="column-details"><span class="column-icon fk-icon">🔗</span><span class="column-name">id_oficina_afectada</span></div><span class="column-type">INT <span class="column-constraints">(Oficinas)</span></span>
+                        </li>
+                        <li>
+                            <div class="column-details"><span class="column-icon fk-icon">🔗</span><span class="column-name">id_rol_atencion</span></div><span class="column-type">INT <span class="column-constraints">(Roles)</span></span>
+                        </li>
+                        <li>
+                            <div class="column-details"><span class="column-icon fk-icon">🔗</span><span class="column-name">id_usuario_asignado</span></div><span class="column-type">INT <span class="column-constraints">(Usuarios, NULL)</span></span>
+                        </li>
+                        <li>
+                            <div class="column-details"><span class="column-icon"></span><span class="column-name">titulo_solicitud</span></div><span class="column-type">VARCHAR(255)</span>
+                        </li>
+                        <li>
+                            <div class="column-details"><span class="column-icon"></span><span class="column-name">descripcion_problema</span></div><span class="column-type">TEXT</span>
+                        </li>
+                        <li>
+                            <div class="column-details"><span class="column-icon"></span><span class="column-name">estado_solicitud</span></div><span class="column-type">ENUM(...)</span>
+                        </li>
+                        <li>
+                            <div class="column-details"><span class="column-icon"></span><span class="column-name">prioridad</span></div><span class="column-type">ENUM(...)</span>
+                        </li>
+                        <li>
+                            <div class="column-details"><span class="column-icon"></span><span class="column-name">fecha_solicitud</span></div><span class="column-type">TIMESTAMP</span>
+                        </li>
+                        <li>
+                            <div class="column-details"><span class="column-icon"></span><span class="column-name">fecha_cierre</span></div><span class="column-type">TIMESTAMP <span class="column-constraints">NULL</span></span>
+                        </li>
+                        <li>
+                            <div class="column-details"><span class="column-icon"></span><span class="column-name">solucion_aplicada</span></div><span class="column-type">TEXT <span class="column-constraints">NULL</span></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Tabla ComentariosSolicitud -->
+            <div class="table-card">
+                <div class="table-name">ComentariosSolicitud</div>
+                <div class="table-columns">
+                    <ul>
+                        <li>
+                            <div class="column-details"><span class="column-icon pk-icon">🔑</span><span class="column-name">id_comentario</span><span class="ai-tag">AI</span></div><span class="column-type">INT</span>
+                        </li>
+                        <li>
+                            <div class="column-details"><span class="column-icon fk-icon">🔗</span><span class="column-name">id_solicitud</span></div><span class="column-type">INT <span class="column-constraints">(Solicitudes)</span></span>
+                        </li>
+                        <li>
+                            <div class="column-details"><span class="column-icon fk-icon">🔗</span><span class="column-name">id_usuario</span></div><span class="column-type">INT <span class="column-constraints">(Usuarios)</span></span>
+                        </li>
+                        <li>
+                            <div class="column-details"><span class="column-icon"></span><span class="column-name">comentario</span></div><span class="column-type">TEXT</span>
+                        </li>
+                        <li>
+                            <div class="column-details"><span class="column-icon"></span><span class="column-name">fecha_comentario</span></div><span class="column-type">TIMESTAMP</span>
+                        </li>
+                        <li>
+                            <div class="column-details"><span class="column-icon"></span><span class="column-name">es_privado</span></div><span class="column-type">BOOLEAN</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div> <!-- Fin diagram-container -->
+    </div> <!-- Fin content-section para Diseño de BD -->
+
+
+    <div class="content-section">
+        <h3>Tipos de Relaciones Principales entre Tablas</h3>
+        <ul class="relations-list">
+            <li><strong>Usuarios y Roles:</strong> Muchos-a-Muchos (*..*). Un usuario puede tener varios roles, y un rol puede ser asignado a varios usuarios (mediante `UsuarioRoles`).</li>
+            <li><strong>Usuarios y Oficinas:</strong> Muchos-a-Muchos (*..*). Un usuario puede estar asignado a varias oficinas para registrar solicitudes, y una oficina puede tener varios usuarios asignados (mediante `UsuarioOficina`).</li>
+            <li><strong>Usuarios y Solicitudes (como solicitante):</strong> Uno-a-Muchos (1..*). Un usuario puede crear muchas solicitudes. Cada solicitud tiene un único usuario solicitante.</li>
+            <li><strong>Roles y Solicitudes (como rol de atención):</strong> Uno-a-Muchos (1..*). Un rol (ej. "Ejecutivo de Soporte TI") puede ser el responsable de atender muchas solicitudes. Cada solicitud se dirige a un rol de atención específico, cuyo color se usará en el dashboard.</li>
+            <li><strong>Oficinas y Solicitudes:</strong> Uno-a-Muchos (1..*). Una oficina puede tener muchas solicitudes. Cada solicitud pertenece a una oficina afectada.</li>
+            <li><strong>Usuarios y Solicitudes (como asignado):</strong> Uno-a-Muchos (1..*). Un usuario (ejecutivo) puede tener muchas solicitudes asignadas. Cada solicitud (si está asignada) tiene un único usuario asignado.</li>
+            <li><strong>Solicitudes y ComentariosSolicitud:</strong> Uno-a-Muchos (1..*). Una solicitud puede tener muchos comentarios. Cada comentario pertenece a una única solicitud.</li>
+            <li><strong>Usuarios y ComentariosSolicitud (como autor):</strong> Uno-a-Muchos (1..*). Un usuario puede escribir muchos comentarios. Cada comentario tiene un único autor.</li>
+        </ul>
+    </div>
+
+</body>
+</html>
